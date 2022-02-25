@@ -222,7 +222,7 @@
 			async function run() {
 				// load face detection and face expression recognition models
 				await changeFaceDetector(TINY_FACE_DETECTOR);
-				await faceapi.loadFaceExpressionModel("/");
+				await faceapi.loadFaceExpressionModel("./");
 				changeInputSize(224);
 
 				// try to access users webcam and stream the images
