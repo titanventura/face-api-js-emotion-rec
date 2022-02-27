@@ -59,30 +59,30 @@
 
 	<script>
 
-		var client = new Paho.Client('broker.mqttdashboard.com',8000,"pub-client-id");
-		console.log("hello.. gokul");
+		// var client = new Paho.Client('broker.mqttdashboard.com',8000,"pub-client-id");
+		// console.log("hello.. gokul");
 
-		// set callback handlers
-		client.onConnectionLost = onConnectionLost;
+		// // set callback handlers
+		// client.onConnectionLost = onConnectionLost;
 
-		// connect the client
-		console.log("attempting to connect...")
+		// // connect the client
+		// console.log("attempting to connect...")
 		
 
-		// called when the client connects
-		function onConnect() {
-			// Once a connection has been made, make a subscription and send a message.
-			console.log("onConnect");
-			client.publish("testqwe", "Hello from a publish call : ha ", 1, false)
-			console.log("published");
-		}
+		// // called when the client connects
+		// function onConnect() {
+		// 	// Once a connection has been made, make a subscription and send a message.
+		// 	console.log("onConnect");
+		// 	client.publish("testqwe", "Hello from a publish call : ha ", 1, false)
+		// 	console.log("published");
+		// }
 
 
-		function connectClient(){
-			client.connect({ onSuccess: onConnect});
-		}
+		// function connectClient(){
+		// 	client.connect({ onSuccess: onConnect});
+		// }
 
-		connectClient();
+		// connectClient();
 		
 		let forwardTimes = [];
 		let withBoxes = true;
@@ -125,24 +125,33 @@
 				const dims = faceapi.matchDimensions(canvas, videoEl, true);
 
 				const resizedResult = faceapi.resizeResults(result, dims);
-				// console.log(resizedResult);	
+				console.log(resizedResult);	
 									
 				const minConfidence = 0.7;
 				let makeRequest = false
 				resizedResult.forEach(element => {
-					if(element.expressions.happy > minConfidence){
+					if(element.expressions.Smiling > minConfidence){
 						makeRequest = true
+						
 					}
 				});
 
 				if(makeRequest){
 					console.log("inside make");
 					try{
-						client.publish("testqwe", "Smiling ", 1, false)
-						console.log("published");
+						const url ='https://dweet.io/dweet/for/em_iq1?smiling=1';
+						fetch(url).then(function(response) {
+										return response.json();
+										}).then(function(data) {
+										console.log(data);
+										}).catch(function() {
+										console.log("url sent");
+										});
+						// client.publish("testqwe", "Smiling ", 1, false)
+						// console.log("published");
 					}catch(err){
 						console.log("err reconnecting.");
-						connectClient()
+						//  connectClient()
 					}
 				}
 
