@@ -47,8 +47,8 @@
 			<video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline></video>
 			<canvas id="overlay"></canvas>
 		</div>
-        <div classs="center-content">
-			<h3>Smile Please &#128522;</h3>
+        <div classs="center-content" >
+			<h3 id="detect">Detecting Face &#128102;</h3>
 		</div>
 			<!-- ssd_mobilenetv1_controls -->
 
@@ -125,25 +125,35 @@
 				const dims = faceapi.matchDimensions(canvas, videoEl, true);
 
 				const resizedResult = faceapi.resizeResults(result, dims);
-				console.log(resizedResult);	
+				// console.log(resizedResult);	
 									
 				const minConfidence = 0.7;
 				let makeRequest = false
 				resizedResult.forEach(element => {
 					if(element.expressions.Smiling > minConfidence){
 						makeRequest = true
-						
+						document.getElementById("detect").innerHTML = '<font color="green"> Smiling &#128522;</font>';
+
+					}
+					else{
+						document.getElementById("detect").innerHTML = '<font color="red">Smile Please 	&#128513;</font>	';
+
 					}
 				});
 
 				if(makeRequest){
-					console.log("inside make");
+					// console.log("inside make");
 					try{
+						var delayInMilliseconds = 2000; 
+
+						setTimeout(function() {
+						}, delayInMilliseconds);
 						const url ='https://dweet.io/dweet/for/em_iq1?smiling=1';
 						fetch(url).then(function(response) {
+				
 										return response.json();
 										}).then(function(data) {
-										console.log(data);
+											console.log('User Smiling!! Open the door');
 										}).catch(function() {
 										console.log("url sent");
 										});
