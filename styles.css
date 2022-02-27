@@ -5,6 +5,13 @@
   margin-top: 20px;
   padding-left: 280px;
   display: inline-flex !important;
+  
+}
+h3{
+  text-align: center;
+  text-transform: uppercase;
+  color:green;
+  
 }
 
 @media only screen and (max-width : 992px) {

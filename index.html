@@ -3,7 +3,12 @@
 
 <head>
 	<!-- <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script> -->
-
+    <title>Smile Detector</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="./face-api.js"></script>
 	<script src="./js/commons.js"></script>
 	<script src="./js/faceDetectionControls.js"></script>
@@ -18,16 +23,34 @@
 </head>
 
 <body>
+	<div class="w3-top">
+		<div class="w3-row w3-large w3-light-grey">
+		  <div class="w3-col s1">
+			<a href="#" class="w3-button w3-block">Home</a>
+		  </div>
+		  <div class="w3-col s1">
+			<a href="#about" class="w3-button w3-block">About</a>
+		  </div>
+		  <div class="w3-col s1">
+			<a href="#contact" class="w3-button w3-block">Contact</a>
+		  </div>
+		</div>
+	  </div>
+	  <br><br><br>
 	<!-- <div id="navbar"></div> -->
 	<div class="center-content page-container">
 		<div class="progress" id="loader">
 			<div class="indeterminate"></div>
 		</div>
-		<div style="position: relative" class="margin">
+	
+		<div style="position:relative" class="margin">
 			<video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline></video>
 			<canvas id="overlay"></canvas>
 		</div>
-
+        <div classs="center-content">
+			<h3>Smile Please &#128522;</h3>
+		</div>
+		
 
 
 		<!-- ssd_mobilenetv1_controls -->

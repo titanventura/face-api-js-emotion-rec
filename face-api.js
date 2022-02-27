@@ -2564,7 +2564,7 @@
       return FaceProcessor;
   }(NeuralNetwork));
 
-  var FACE_EXPRESSION_LABELS = ['neutral', 'happy', 'sad', 'angry', 'fearful', 'disgusted', 'surprised'];
+  var FACE_EXPRESSION_LABELS = ['Smile Please','Smiling'];
   var FaceExpressions = /** @class */ (function () {
       function FaceExpressions(probabilities) {
           var _this = this;
