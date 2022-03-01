@@ -6,13 +6,15 @@
     <title>Smile Detector</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="jquery.min.js" type="text/javascript"></script>
+    <script src="config.js" type="text/javascript"></script>
+	<script src="mqttws31.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="./face-api.js"></script>
 	<script src="./js/commons.js"></script>
 	<script src="./js/faceDetectionControls.js"></script>
-	<script src="paho-mqtt.js"></script>
 	<script src="util.js"></script>
 	<link rel="stylesheet" href="./styles.css" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css" />
@@ -58,6 +60,67 @@
 	</div>
 
 	<script>
+		  var mqtt;
+    var reconnectTimeout = 2000;
+
+    function MQTTconnect() {
+	if (typeof path == "undefined") {
+		path = '/mqtt';
+	}
+	mqtt = new Paho.MQTT.Client(
+			host,
+			port,
+			path,
+			"web_" + parseInt(Math.random() * 100, 10)
+	);
+        var options = {
+            timeout: 3,
+            useSSL: useTLS,
+            cleanSession: cleansession,
+            onSuccess: onConnect,
+            onFailure: function (message) {
+                $('#status').val("Connection failed: " + message.errorMessage + "Retrying");
+                setTimeout(MQTTconnect, reconnectTimeout);
+            }
+        };
+
+        mqtt.onConnectionLost = onConnectionLost;
+        mqtt.onMessageArrived = onMessageArrived;
+
+        if (username != null) {
+            options.userName = username;
+            options.password = password;
+        }
+        console.log("Host="+ host + ", port=" + port + ", path=" + path + " TLS = " + useTLS + " username=" + username + " password=" + password);
+        mqtt.connect(options);
+    }
+
+    function onConnect() {
+        $('#status').val('Connected to ' + host + ':' + port + path);
+        // Connection succeeded; subscribe to our topic
+        mqtt.subscribe(topic, {qos: 0});
+		$('#topic').val(topic);
+    }
+
+    function onConnectionLost(response) {
+        setTimeout(MQTTconnect, reconnectTimeout);
+        $('#status').val("connection lost: " + responseObject.errorMessage + ". Reconnecting");
+
+    };
+
+    function onMessageArrived(message) {
+
+        var topic = message.destinationName;
+        var payload = message.payloadString;
+
+        $('#ws').prepend('<li>' + topic + ' = ' + payload + '</li>');
+    };
+
+
+    $(document).ready(function() {
+        MQTTconnect();
+    });
+
 
 		// var client = new Paho.Client('broker.mqttdashboard.com',8000,"pub-client-id");
 		// console.log("hello.. gokul");
@@ -144,23 +207,13 @@
 				if(makeRequest){
 					// console.log("inside make");
 					try{
-						var delayInMilliseconds = 2000; 
-
-						setTimeout(function() {
-						}, delayInMilliseconds);
-						const url ='https://dweet.io/dweet/for/em_iq1?smiling=1';
-						fetch(url).then(function(response) {
-				
-										return response.json();
-										}).then(function(data) {
-											console.log('User Smiling!! Open the door');
-										}).catch(function() {
-										console.log("url sent");
-										});
-						// client.publish("testqwe", "Smiling ", 1, false)
-						// console.log("published");
+							message1=new Paho.MQTT.Message('Hi');
+							message1.destinationName='srinath';
+							mqtt.send(message1);
+							console.log("published");
+							message1.publish("srinath", "Smiling ");
 					}catch(err){
-						console.log("err reconnecting.");
+						console.log("err reconnecting."+err);
 						//  connectClient()
 					}
 				}
@@ -195,18 +248,11 @@
 			videoEl.srcObject = stream;
 		}
 
-		function updateResults() { }
-
 		$(document).ready(function () {
 			// renderNavBar('#navbar', 'webcam_face_expression_recognition')
 			initFaceDetectionControls();
 			run();
 		});
-
-	
-
-
-
 
 	</script>
 </body>
