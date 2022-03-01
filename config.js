@@ -2,7 +2,7 @@
 host = 'mqtt.iqube.io';	// hostname or IP address
 // host = '172.16.153.110';	// hostname or IP address
 port = 443;
-topic = 'srinath';		// topic to subscribe to
+topic = 'emrld/dr/1';		// topic to subscribe to
 useTLS = true;
 username = 'iqube';
 password = 'iQube@2019..';
