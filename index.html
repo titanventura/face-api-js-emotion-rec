@@ -8,7 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="jquery.min.js" type="text/javascript"></script>
 	<script src="config.js" type="text/javascript"></script>
-	<script src="mqttws31.js" type="text/javascript"></script>
+	<!-- <script src="mqttws31.js" type="text/javascript"></script> -->
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -60,66 +60,66 @@
 	</div>
 
 	<script>
-		var mqtt;
-		var reconnectTimeout = 2000;
+		// var mqtt;
+		// var reconnectTimeout = 2000;
 
-		function MQTTconnect() {
-			if (typeof path == "undefined") {
-				path = '/mqtt';
-			}
-			mqtt = new Paho.MQTT.Client(
-				host,
-				port,
-				path,
-				"web_" + parseInt(Math.random() * 100, 10)
-			);
-			var options = {
-				timeout: 3,
-				useSSL: useTLS,
-				cleanSession: cleansession,
-				onSuccess: onConnect,
-				onFailure: function (message) {
-					$('#status').val("Connection failed: " + message.errorMessage + "Retrying");
-					setTimeout(MQTTconnect, reconnectTimeout);
-				}
-			};
+		// function MQTTconnect() {
+		// 	if (typeof path == "undefined") {
+		// 		path = '/mqtt';
+		// 	}
+		// 	mqtt = new Paho.MQTT.Client(
+		// 		host,
+		// 		port,
+		// 		path,
+		// 		"web_" + parseInt(Math.random() * 100, 10)
+		// 	);
+		// 	var options = {
+		// 		timeout: 3,
+		// 		useSSL: useTLS,
+		// 		cleanSession: cleansession,
+		// 		onSuccess: onConnect,
+		// 		onFailure: function (message) {
+		// 			$('#status').val("Connection failed: " + message.errorMessage + "Retrying");
+		// 			setTimeout(MQTTconnect, reconnectTimeout);
+		// 		}
+		// 	};
 
-			mqtt.onConnectionLost = onConnectionLost;
-			mqtt.onMessageArrived = onMessageArrived;
+		// 	mqtt.onConnectionLost = onConnectionLost;
+		// 	mqtt.onMessageArrived = onMessageArrived;
 
-			if (username != null) {
-				options.userName = username;
-				options.password = password;
-			}
-			console.log("Host=" + host + ", port=" + port + ", path=" + path + " TLS = " + useTLS + " username=" + username + " password=" + password);
-			mqtt.connect(options);
-		}
+		// 	if (username != null) {
+		// 		options.userName = username;
+		// 		options.password = password;
+		// 	}
+		// 	console.log("Host=" + host + ", port=" + port + ", path=" + path + " TLS = " + useTLS + " username=" + username + " password=" + password);
+		// 	mqtt.connect(options);
+		// }
 
-		function onConnect() {
-			$('#status').val('Connected to ' + host + ':' + port + path);
-			// Connection succeeded; subscribe to our topic
-			mqtt.subscribe(topic, { qos: 0 });
-			$('#topic').val(topic);
-		}
+		// function onConnect() {
+		// 	$('#status').val('Connected to ' + host + ':' + port + path);
+		// 	// Connection succeeded; subscribe to our topic
+		// 	mqtt.subscribe(topic, { qos: 0 });
+		// 	$('#topic').val(topic);
+		// }
 
-		function onConnectionLost(response) {
-			setTimeout(MQTTconnect, reconnectTimeout);
-			$('#status').val("connection lost: " + responseObject.errorMessage + ". Reconnecting");
+		// function onConnectionLost(response) {
+		// 	setTimeout(MQTTconnect, reconnectTimeout);
+		// 	$('#status').val("connection lost: " + responseObject.errorMessage + ". Reconnecting");
 
-		};
+		// };
 
-		function onMessageArrived(message) {
+		// function onMessageArrived(message) {
 
-			var topic = message.destinationName;
-			var payload = message.payloadString;
+		// 	var topic = message.destinationName;
+		// 	var payload = message.payloadString;
 
-			$('#ws').prepend('<li>' + topic + ' = ' + payload + '</li>');
-		};
+		// 	$('#ws').prepend('<li>' + topic + ' = ' + payload + '</li>');
+		// };
 
 
-		$(document).ready(function () {
-			MQTTconnect();
-		});
+		// $(document).ready(function () {
+		// 	MQTTconnect();
+		// });
 
 
 		// var client = new Paho.Client('broker.mqttdashboard.com',8000,"pub-client-id");
@@ -194,12 +194,33 @@
 
 				const minConfidence = 0.8;
 				let smileDetected = false
-
+				
+				
 				resizedResult.forEach(element => {
+
 
 					if (element.expressions.Smiling > minConfidence) {
 						smileDetected = true
 						document.getElementById("detect").innerHTML = '<font color="green"> Smiling &#128522;</font>';
+						fetch("http://127.0.0.1:5000/receiver", 
+						{
+						method: 'POST',
+						headers: {
+						'Content-type': 'application/json',
+						'Accept': 'application/json',
+						},
+						body:JSON.stringify('Yes')}).then(res=>{
+						if(res.ok){
+						return res.json()
+						}else{
+						alert("something is wrong")
+						}
+						}).then(jsonResponse=>{
+						
+						console.log(jsonResponse)
+						} 
+						).catch((err) => console.error(err));
+						
 					}
 					else {
 						document.getElementById("detect").innerHTML = '<font color="red">Smile Please 	&#128513;</font>	';
@@ -210,20 +231,20 @@
 
 
 				if (smileDetected == true) {
-					if(waitingMode == false)
-					{
-						message = new Paho.MQTT.Message('Hi');
-						message.destinationName = topic;
-						mqtt.send(message);
-						console.log("published");
-						waitingMode = true;
-					}
-					if ((new Date()  - lastPublished ) > 5000) 
-					{
+					// if(waitingMode == false)
+					// {
+					// 	message = new Paho.MQTT.Message('Hi');
+					// 	message.destinationName = topic;
+					// 	mqtt.send(message);
+					// 	console.log("published");
+					// 	waitingMode = true;
+					// }
+					// if ((new Date()  - lastPublished ) > 5000) 
+					// {
 
-						lastPublished = new Date() ;
-						waitingMode = false;
-					}
+					// 	lastPublished = new Date() ;
+					// 	waitingMode = false;
+					// }
 
 
 				}
